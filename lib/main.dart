@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stocks/screens/home_screen.dart';
+import 'package:get/get.dart';
+import 'package:stocks/controllers/data_controller.dart';
+import 'package:stocks/utils/app_router.dart';
 import 'package:stocks/utils/app_colors.dart';
 
 void main() {
@@ -11,14 +13,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    Get.put(DataController());
+
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Finance App',
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.darkBackground,
         fontFamily: "Poppins",
       ),
-      home: const HomeScreen(),
+      initialRoute: AppRouter.home,
+      getPages: AppRouter.getPages(),
     );
   }
 }

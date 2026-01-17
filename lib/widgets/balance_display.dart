@@ -13,10 +13,10 @@ class BalanceDisplay extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color.fromARGB(255, 59, 81, 133), // mid blue
-            Color.fromARGB(255, 26, 40, 73), // deep navy (bottom-left)
-            Color.fromARGB(255, 26, 40, 73), // deep navy (bottom-left)
-            Color.fromARGB(255, 73, 88, 119), // highlight blue (top-right)
+            Color.fromARGB(255, 59, 81, 133),
+            Color.fromARGB(255, 26, 40, 73),
+            Color.fromARGB(255, 26, 40, 73),
+            Color.fromARGB(255, 73, 88, 119),
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,

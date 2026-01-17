@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:stocks/controllers/data_controller.dart';
 import 'package:stocks/utils/app_colors.dart';
 import 'package:stocks/widgets/balance_display.dart';
 import 'package:stocks/widgets/custom_app_bar.dart';
@@ -8,7 +10,7 @@ import 'package:stocks/widgets/line_chart.dart';
 import 'package:stocks/widgets/transaction_button.dart';
 import 'package:stocks/widgets/transactions.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<DataController> {
   const HomeScreen({super.key});
 
   @override
@@ -47,10 +49,10 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
+                  child: Obx(() => Row(
                     spacing: 8,
                     children: [
-                      StockDisplay(name: "Apple", symbol: "AAPL", isUp: true),
+                      StockDisplay(name: "Apple", symbol: "AAPL", isUp: true, bars: controller.bars),
 
                       StockDisplay(
                         name: "Google",
@@ -66,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                         growth: "9.054%",
                       ),
                     ],
-                  ),
+                  )),
                 ),
               ),
               Padding(

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../models/data_binding.dart';
 import '../models/stock.dart';
 
-// Controller responsible for fetching and exposing stock data.
 class DataController extends GetxController {
   DataController({Dio? dio}) : _dio = dio ?? Dio() {
     _dio.options.baseUrl = 'https://www.alphavantage.co';
@@ -14,9 +13,6 @@ class DataController extends GetxController {
 
   final DataBinding<AlphaVantageDailyResponse> dailyBinding = DataBinding();
   final RxBool isLoading = false.obs;
-  // Fetch daily time series for [symbol] using the provided [apiKey].
-  // On success the parsed AlphaVantageDailyResponse is stored in
-  // dailyBinding.value. Errors are rethrown to the caller.
   Future<void> fetchDaily(String symbol, {required String apiKey}) async {
     isLoading.value = true;
     try {

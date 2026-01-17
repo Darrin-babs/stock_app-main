@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:stocks/models/stock.dart';
 import 'package:stocks/utils/app_colors.dart';
 
 class StockDisplay extends StatefulWidget {
@@ -10,6 +11,7 @@ class StockDisplay extends StatefulWidget {
     this.price = "\$523.13",
     this.growth = "+12%",
     this.isUp = true,
+    this.bars,
   });
 
   final String name;
@@ -17,6 +19,7 @@ class StockDisplay extends StatefulWidget {
   final String price;
   final String growth;
   final bool isUp;
+  final List<DailyBar>? bars;
 
   @override
   State<StockDisplay> createState() => _StockDisplayState();
@@ -97,6 +100,27 @@ class _StockDisplayState extends State<StockDisplay> {
   }
 
   LineChartData avgData() {
+    List<FlSpot> spots;
+    if (widget.bars != null && widget.bars!.isNotEmpty) {
+      final recentBars = widget.bars!.take(7).toList().reversed.toList();
+      double minY = double.infinity;
+      double maxY = double.negativeInfinity;
+      for (var bar in recentBars) {
+        minY = minY < bar.close ? minY : bar.close;
+        maxY = maxY > bar.close ? maxY : bar.close;
+      }
+      spots = recentBars.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.close)).toList();
+    } else {
+      spots = const [
+        FlSpot(0, 1.44),
+        FlSpot(1, 1),
+        FlSpot(1.8, 1.5),
+        FlSpot(4, 2.60),
+        FlSpot(6, 2.0),
+        FlSpot(8, 1.94),
+        FlSpot(11, 3.6),
+      ];
+    }
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       gridData: FlGridData(show: false, drawHorizontalLine: false),
@@ -118,15 +142,7 @@ class _StockDisplayState extends State<StockDisplay> {
       maxY: 4,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 1.44),
-            FlSpot(1, 1),
-            FlSpot(1.8, 1.5),
-            FlSpot(4, 2.60),
-            FlSpot(6, 2.0),
-            FlSpot(8, 1.94),
-            FlSpot(11, 3.6),
-          ],
+          spots: spots,
           isCurved: true,
           gradient: LinearGradient(
             colors: widget.isUp

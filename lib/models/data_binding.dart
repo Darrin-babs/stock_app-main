@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-// DataBinding: small generic reactive binding wrapper around GetX's Rxn.
 class DataBinding<T> {
   final Rxn<T> _rxn;
 

@@ -52,20 +52,18 @@ class HomeScreen extends GetView<DataController> {
                   child: Obx(() => Row(
                     spacing: 8,
                     children: [
-                      StockDisplay(name: "Apple", symbol: "AAPL", isUp: true, bars: controller.bars),
+                      StockDisplay(name: "Apple", symbol: "AAPL", bars: controller.getBars('AAPL')),
 
                       StockDisplay(
                         name: "Google",
                         symbol: "GOOGL",
-                        isUp: false,
+                        bars: controller.getBars('GOOGL'),
                       ),
 
                       StockDisplay(
                         name: "Amazon",
                         symbol: "AMZN",
-                        isUp: true,
-                        price: "\$132.00",
-                        growth: "9.054%",
+                        bars: controller.getBars('AMZN'),
                       ),
                     ],
                   )),

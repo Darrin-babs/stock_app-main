@@ -8,17 +8,17 @@ class StockDisplay extends StatefulWidget {
     super.key,
     required this.name,
     required this.symbol,
-    this.price = "\$523.13",
-    this.growth = "+12%",
-    this.isUp = true,
+    this.price,
+    this.growth,
+    this.isUp,
     this.bars,
   });
 
   final String name;
   final String symbol;
-  final String price;
-  final String growth;
-  final bool isUp;
+  final String? price;
+  final String? growth;
+  final bool? isUp;
   final List<DailyBar>? bars;
 
   @override
@@ -32,6 +32,33 @@ class _StockDisplayState extends State<StockDisplay> {
     AppColors.contentColorRed,
     AppColors.contentColorPink,
   ];
+
+  String get displayPrice {
+    if (widget.bars != null && widget.bars!.isNotEmpty) {
+      final latest = widget.bars!.first;
+      return '\$${latest.close.toStringAsFixed(2)}';
+    }
+    return widget.price ?? '\$523.13';
+  }
+
+  String get displayGrowth {
+    if (widget.bars != null && widget.bars!.isNotEmpty) {
+      final latest = widget.bars!.first;
+      final change = ((latest.close - latest.open) / latest.open) * 100;
+      final sign = change >= 0 ? '+' : '';
+      return '${sign}${change.toStringAsFixed(2)}%';
+    }
+    return widget.growth ?? '+12%';
+  }
+
+  bool get displayIsUp {
+    if (widget.bars != null && widget.bars!.isNotEmpty) {
+      final latest = widget.bars!.first;
+      return latest.close > latest.open;
+    }
+    return widget.isUp ?? true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,7 +103,7 @@ class _StockDisplayState extends State<StockDisplay> {
               spacing: 5,
               children: [
                 Text(
-                  widget.price,
+                  displayPrice,
                   style: TextStyle(
                     color: AppColors.primaryText,
                     fontSize: 15,
@@ -84,7 +111,7 @@ class _StockDisplayState extends State<StockDisplay> {
                   ),
                 ),
                 Text(
-                  widget.growth,
+                  displayGrowth,
                   style: TextStyle(
                     color: AppColors.primaryText,
                     fontSize: 15,
@@ -145,7 +172,7 @@ class _StockDisplayState extends State<StockDisplay> {
           spots: spots,
           isCurved: true,
           gradient: LinearGradient(
-            colors: widget.isUp
+            colors: displayIsUp
                 ? [
                     ColorTween(
                       begin: gradientColors[0],
@@ -173,7 +200,7 @@ class _StockDisplayState extends State<StockDisplay> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: widget.isUp
+              colors: displayIsUp
                   ? [
                       ColorTween(
                         begin: gradientColors[0].withAlpha(50),

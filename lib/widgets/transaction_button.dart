@@ -64,13 +64,13 @@ class TransactionButtonRow extends StatelessWidget {
                 final messenger = ScaffoldMessenger.of(context);
                 try {
                   await controller.fetchDaily(
-                    'IBM',
+                    'AAPL',
                     apiKey: 'VRPSSNJICLSJMM08',
                   );
 
-                  final count = controller.bars.length;
+                  final count = controller.getBars('AAPL').length;
                   messenger.showSnackBar(
-                    SnackBar(content: Text('Fetched $count daily bars for IBM')),
+                    SnackBar(content: Text('Fetched $count daily bars for AAPL')),
                   );
                 } catch (e) {
                   messenger.showSnackBar(

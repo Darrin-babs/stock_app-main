@@ -11,9 +11,20 @@ class DataController extends GetxController {
 
   final Dio _dio;
 
-  final DataBinding<AlphaVantageDailyResponse> dailyBinding = DataBinding();
+  final RxMap<String, DataBinding<AlphaVantageDailyResponse>> dailyBindings = <String, DataBinding<AlphaVantageDailyResponse>>{}.obs;
   final RxBool isLoading = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDaily('AAPL', apiKey: 'VRPSSNJICLSJMM08');
+    fetchDaily('GOOGL', apiKey: 'VRPSSNJICLSJMM08');
+    fetchDaily('AMZN', apiKey: 'VRPSSNJICLSJMM08');
+  }
+
   Future<void> fetchDaily(String symbol, {required String apiKey}) async {
+    if (dailyBindings.containsKey(symbol)) return;
+    dailyBindings[symbol] = DataBinding();
     isLoading.value = true;
     try {
       final resp = await _dio.get(
@@ -26,10 +37,10 @@ class DataController extends GetxController {
       );
 
       if (resp.data is Map<String, dynamic>) {
-        dailyBinding.value = AlphaVantageDailyResponse.fromJson(
+        dailyBindings[symbol]!.value = AlphaVantageDailyResponse.fromJson(
             (resp.data as Map).cast<String, dynamic>());
       } else if (resp.data is String) {
-        dailyBinding.value = AlphaVantageDailyResponse.fromRawJson(
+        dailyBindings[symbol]!.value = AlphaVantageDailyResponse.fromRawJson(
             resp.data as String);
       } else {
         throw Exception('Unexpected response format');
@@ -39,5 +50,5 @@ class DataController extends GetxController {
     }
   }
 
-  List<DailyBar> get bars => dailyBinding.value?.bars ?? <DailyBar>[];
+  List<DailyBar> getBars(String symbol) => dailyBindings[symbol]?.value?.bars ?? <DailyBar>[];
 }

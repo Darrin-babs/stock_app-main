@@ -23,8 +23,11 @@ class DataController extends GetxController {
   }
 
   Future<void> fetchDaily(String symbol, {required String apiKey}) async {
-    if (dailyBindings.containsKey(symbol)) return;
-    dailyBindings[symbol] = DataBinding();
+    // Initialize binding if it doesn't exist
+    if (!dailyBindings.containsKey(symbol)) {
+      dailyBindings[symbol] = DataBinding();
+    }
+    
     isLoading.value = true;
     try {
       final resp = await _dio.get(
@@ -45,9 +48,20 @@ class DataController extends GetxController {
       } else {
         throw Exception('Unexpected response format');
       }
+    } catch (e) {
+      print('Error fetching data for $symbol: $e');
+      rethrow;
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> refreshAll({required String apiKey}) async {
+    await Future.wait([
+      fetchDaily('AAPL', apiKey: apiKey),
+      fetchDaily('GOOGL', apiKey: apiKey),
+      fetchDaily('AMZN', apiKey: apiKey),
+    ]);
   }
 
   List<DailyBar> getBars(String symbol) => dailyBindings[symbol]?.value?.bars ?? <DailyBar>[];

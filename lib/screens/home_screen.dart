@@ -24,90 +24,97 @@ class HomeScreen extends GetView<DataController> {
       child: Scaffold(
         backgroundColor: AppColors.darkBackground,
         body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomAppBar(),
-              BalanceDisplay(),
-              TransactionButtonRow(),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                child: Text(
-                  "Featured investment",
-                  style: TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await controller.refreshAll(apiKey: 'VRPSSNJICLSJMM08');
+            },
+            color: AppColors.contentColorBlue,
+            backgroundColor: AppColors.cardDarkBackground,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomAppBar(),
+                BalanceDisplay(),
+                TransactionButtonRow(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-                  textAlign: TextAlign.start,
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Obx(() => Row(
-                    spacing: 8,
-                    children: [
-                      StockDisplay(name: "Apple", symbol: "AAPL", bars: controller.getBars('AAPL')),
-
-                      StockDisplay(
-                        name: "Google",
-                        symbol: "GOOGL",
-                        bars: controller.getBars('GOOGL'),
-                      ),
-
-                      StockDisplay(
-                        name: "Amazon",
-                        symbol: "AMZN",
-                        bars: controller.getBars('AMZN'),
-                      ),
-                    ],
-                  )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "My portfolio",
-                      style: TextStyle(
-                        color: AppColors.primaryText,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      textAlign: TextAlign.start,
+                  child: Text(
+                    "Featured investment",
+                    style: TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
                     ),
-                    InkWell(
-                      child: Text(
-                        "View all",
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Obx(() => Row(
+                      spacing: 8,
+                      children: [
+                        StockDisplay(name: "Apple", symbol: "AAPL", bars: controller.getBars('AAPL')),
+
+                        StockDisplay(
+                          name: "Google",
+                          symbol: "GOOGL",
+                          bars: controller.getBars('GOOGL'),
+                        ),
+
+                        StockDisplay(
+                          name: "Amazon",
+                          symbol: "AMZN",
+                          bars: controller.getBars('AMZN'),
+                        ),
+                      ],
+                    )),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "My portfolio",
                         style: TextStyle(
                           color: AppColors.primaryText,
-                          fontSize: 16,
+                          fontSize: 20,
                           fontWeight: FontWeight.w400,
                         ),
                         textAlign: TextAlign.start,
                       ),
-                    ),
-                  ],
+                      InkWell(
+                        child: Text(
+                          "View all",
+                          style: TextStyle(
+                            color: AppColors.primaryText,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Transactions(
-                stockIcon: "assets/images/Amazon_icon.png",
-                stockName: "Amazon",
-                stockSymbol: "AMZN",
-                stockPrice: "\$132.00",
-                stockGrowth: "+9.054%",
-              ),
-            ],
+                Transactions(
+                  stockIcon: "assets/images/Amazon_icon.png",
+                  stockName: "Amazon",
+                  stockSymbol: "AMZN",
+                  stockPrice: "\$132.00",
+                  stockGrowth: "+9.054%",
+                ),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(

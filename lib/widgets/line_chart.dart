@@ -38,21 +38,27 @@ class _StockDisplayState extends State<StockDisplay> {
       final latest = widget.bars!.first;
       return '\$${latest.close.toStringAsFixed(2)}';
     }
-    return widget.price ?? '\$523.13';
+    return widget.price ?? '\$0.00';
   }
 
   String get displayGrowth {
     if (widget.bars != null && widget.bars!.isNotEmpty) {
       final latest = widget.bars!.first;
-      final change = ((latest.close - latest.open) / latest.open) * 100;
+      final oldest = widget.bars!.last;
+      final change = ((latest.close - oldest.close) / oldest.close) * 100;
       final sign = change >= 0 ? '+' : '';
       return '${sign}${change.toStringAsFixed(2)}%';
     }
-    return widget.growth ?? '+12%';
+    return widget.growth ?? '0.00%';
   }
 
   bool get displayIsUp {
     if (widget.bars != null && widget.bars!.isNotEmpty) {
+      if (widget.bars!.length > 1) {
+        final latest = widget.bars!.first;
+        final oldest = widget.bars!.last;
+        return latest.close > oldest.close;
+      }
       final latest = widget.bars!.first;
       return latest.close > latest.open;
     }
@@ -128,15 +134,30 @@ class _StockDisplayState extends State<StockDisplay> {
 
   LineChartData avgData() {
     List<FlSpot> spots;
+    double minY = 0;
+    double maxY = 4;
+
     if (widget.bars != null && widget.bars!.isNotEmpty) {
       final recentBars = widget.bars!.take(7).toList().reversed.toList();
-      double minY = double.infinity;
-      double maxY = double.negativeInfinity;
+      
+      // Calculate min and max from actual data
+      minY = double.infinity;
+      maxY = double.negativeInfinity;
       for (var bar in recentBars) {
         minY = minY < bar.close ? minY : bar.close;
         maxY = maxY > bar.close ? maxY : bar.close;
       }
-      spots = recentBars.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.close)).toList();
+      
+      // Add padding to min/max for better visualization
+      final padding = (maxY - minY) * 0.1;
+      minY = (minY - padding).clamp(0, double.infinity);
+      maxY = maxY + padding;
+      
+      // Create spots with normalized Y values for chart display
+      spots = recentBars.asMap().entries.map((e) {
+        final normalizedY = (e.value.close - minY) / (maxY - minY) * 4;
+        return FlSpot(e.key.toDouble(), normalizedY);
+      }).toList();
     } else {
       spots = const [
         FlSpot(0, 1.44),
@@ -148,6 +169,7 @@ class _StockDisplayState extends State<StockDisplay> {
         FlSpot(11, 3.6),
       ];
     }
+    
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       gridData: FlGridData(show: false, drawHorizontalLine: false),
